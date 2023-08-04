@@ -22,3 +22,25 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+#proyecto Integrador parte 3
+
+import os
+
+def borrar_terminal():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+def bucle_principal():
+    numero = 0
+    while numero <= 50:
+        borrar_terminal()
+        print(f"Número actual: {numero}")
+
+        tecla = input("Presiona 'n' para continuar (o cualquier otra tecla para salir): ")
+        if tecla.lower() == 'n':
+            numero += 1
+        else:
+            break
+
+if __name__ == "__main__":
+    bucle_principal()

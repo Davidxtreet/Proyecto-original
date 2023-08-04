@@ -1,2 +1,2 @@
-nombre_proyecto = "Come y no Mueras"
-Descripcion_proyecto ="""Una serpiente recien nacida se mueve por la pantalla. Si no tienes buenos reflejos, esta serpiente chocará contra los bordes de la pantalla y perderás la partida. Y para obtener puntos, deberás recopilar los huevos que encuentres a tu paso, lo que a su vez ira creciendo. Así se podría definir lo que conocemos como Snake, un juego en el que no está claro lo protagoniza una serpiente."""
+nombre_proyecto = "Sal si puedes."
+Este es un videojuego de texto de recorrer laberintos. En donde estan representados por caracteres ASCII dónde # representará una pared, . un pasillo y P el personaje. Podrás moverte por el mapa usando las teclas ↑ ↓ ← → de tu teclado.

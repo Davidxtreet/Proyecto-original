@@ -44,3 +44,86 @@ def bucle_principal():
 
 if __name__ == "__main__":
     bucle_principal()
+
+#proyecto integrador parte 4
+
+import os
+import keyboard
+
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+def display_map(game_map):
+    for row in game_map:
+        print(''.join(row))
+    print()
+
+def main_loop(game_map, start_pos, end_pos):
+    px, py = start_pos
+    
+    while (px, py) != end_pos:
+        game_map[py][px] = 'P'
+        clear_screen()
+        display_map(game_map)
+        game_map[py][px] = '.'
+        
+        key = keyboard.read_event().name
+        
+        if key == 'up':
+            new_px, new_py = px, py - 1
+        elif key == 'down':
+            new_px, new_py = px, py + 1
+        elif key == 'left':
+            new_px, new_py = px - 1, py
+        elif key == 'right':
+            new_px, new_py = px + 1, py
+        else:
+            continue
+        
+        if (
+            0 <= new_px < len(game_map[0]) and
+            0 <= new_py < len(game_map) and
+            game_map[new_py][new_px] != '#'
+        ):
+            px, py = new_px, new_py
+
+    clear_screen()
+    display_map(game_map)
+    print("¡Has llegado al final!")
+
+# Mapa del laberinto en forma de cadena
+maze_str = """
+#.###################
+#.#.....#...#.....#.#
+#.#.#####.#.###.#.#.#
+#.#...#.#.#...#.#...#
+#.#.#.#.###.#####.###
+#...#...#.#.#.#...#.#
+#.#.###.#.#.#.###.#.#
+#.#.#.......#.#.....#
+#######.#.###.#.#.#.#
+#.......#...#...#.#.#
+#.#####.###########.#
+#.#...#.......#.....#
+#.#.###.#####.#.#.###
+#.....#.#.......#...#
+#.#######.#######.###
+#.#.....#.#...#.....#
+###.###.#.#.###.#####
+#...#...#.....#...#.#
+#.#.#.#####.#.###.#.#
+#.#.#.......#...#...#
+###################.#
+
+"""
+
+# Convertir la cadena en una matriz de caracteres
+maze_lines = maze_str.strip().split("\n")
+game_map = [list(line) for line in maze_lines]
+
+# Definir posiciones inicial y final
+start_position = (1, 0)
+end_position = (len(game_map[0]) - 1, len(game_map) - 1)
+
+main_loop(game_map, start_position, end_position)
+

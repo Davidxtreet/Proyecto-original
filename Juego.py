@@ -1,40 +1,57 @@
 import os
 import keyboard
 
+from functools import reduce
+
 def cargar_laberinto():
     laberinto = []
     with open("C:/Users/david/Documents/ejercicios python/proyecto original/Proyecto-original/mapas/laberinto.txt", "r") as archivo:
-        for i, linea in enumerate(archivo):
-            if i < 4:
-                continue  # Saltar las primeras cuatro filas
+        lineas = archivo.readlines()[4:]  # Leer todas las líneas después de las primeras cuatro
+        for linea in lineas:
             laberinto.append(list(linea.strip()))
     return laberinto
 
-def mostrar_laberinto(laberinto):
-    os.system("cls" if os.name == "nt" else "clear")
-    for fila in laberinto:
-        print(" ".join(fila))
+def mostrar_fila(fila):
+    return " ".join(fila)
 
-def mover_jugador(laberinto, direccion, jugador):
-    for i in range(len(laberinto)):
-        for j in range(len(laberinto[i])):
-            if laberinto[i][j] == jugador:
-                if direccion == "arriba" and i > 0 and laberinto[i - 1][j] != "#":
-                    laberinto[i][j] = "."
-                    laberinto[i - 1][j] = jugador
-                    return
-                elif direccion == "abajo" and i < len(laberinto) - 1 and laberinto[i + 1][j] != "#":
-                    laberinto[i][j] = "."
-                    laberinto[i + 1][j] = jugador
-                    return
-                elif direccion == "izquierda" and j > 0 and laberinto[i][j - 1] != "#":
-                    laberinto[i][j] = "."
-                    laberinto[i][j - 1] = jugador
-                    return
-                elif direccion == "derecha" and j < len(laberinto[i]) - 1 and laberinto[i][j + 1] != "#":
-                    laberinto[i][j] = "."
-                    laberinto[i][j + 1] = jugador
-                    return
+def mostrar_laberinto(laberinto, jugador_x, jugador_y):
+    os.system("cls" if os.name == "nt" else "clear")
+    
+    # Agregar al jugador en las coordenadas proporcionadas
+    laberinto_con_jugador = [list(fila) for fila in laberinto]
+    laberinto_con_jugador[jugador_y][jugador_x] = "P"
+    
+    # Imprimir el laberinto con las coordenadas del jugador
+    for fila in laberinto_con_jugador:
+        fila_str = " ".join(fila)
+        print(fila_str)
+    
+    # Mostrar las coordenadas del jugador
+    print(f"Coordenadas del jugador: ({jugador_x}, {jugador_y})")
+
+    # Añadir espacios en blanco para mantener el formato 20x20
+    espacios_en_blanco = " " * (20 - len(laberinto[0]))
+    for _ in range(20 - len(laberinto)):
+        print(espacios_en_blanco)
+
+
+
+def mover_jugador(laberinto, direccion, jugador_x, jugador_y):
+    nuevo_x, nuevo_y = jugador_x, jugador_y
+
+    if direccion == "up" and jugador_y > 0 and laberinto[jugador_y - 1][jugador_x] != "#":
+        nuevo_y -= 1
+    elif direccion == "down" and jugador_y < len(laberinto) - 1 and laberinto[jugador_y + 1][jugador_x] != "#":
+        nuevo_y += 1
+    elif direccion == "left" and jugador_x > 0 and laberinto[jugador_y][jugador_x - 1] != "#":
+        nuevo_x -= 1
+    elif direccion == "right" and jugador_x < len(laberinto[0]) - 1 and laberinto[jugador_y][jugador_x + 1] != "#":
+        nuevo_x += 1
+
+    if laberinto[nuevo_y][nuevo_x] == "F":
+        return None, None  # El jugador llegó a la salida
+
+    return nuevo_x, nuevo_y
 
 def main():
     nombre_jugador = input("Ingrese su nombre: ")
@@ -42,26 +59,29 @@ def main():
     input("Presiona Enter para comenzar...")
     
     laberinto = cargar_laberinto()
-    jugador = "P"
-    mostrar_laberinto(laberinto)
+    jugador_x, jugador_y = None, None
+    
+    for i in range(len(laberinto)):
+        for j in range(len(laberinto[i])):
+            if laberinto[i][j] == "P":
+                jugador_x, jugador_y = j, i
     
     while True:
+        mostrar_laberinto(laberinto, jugador_x, jugador_y)
         tecla = keyboard.read_event().name
-        if tecla == "up":
-            mover_jugador(laberinto, "arriba", jugador)
-        elif tecla == "down":
-            mover_jugador(laberinto, "abajo", jugador)
-        elif tecla == "left":
-            mover_jugador(laberinto, "izquierda", jugador)
-        elif tecla == "right":
-            mover_jugador(laberinto, "derecha", jugador)
+
+        if tecla in ["up", "down", "left", "right"]:
+            nuevo_x, nuevo_y = mover_jugador(laberinto, tecla, jugador_x, jugador_y)
+
+            if nuevo_x is not None and nuevo_y is not None:
+                laberinto[jugador_y][jugador_x] = "."
+                jugador_x, jugador_y = nuevo_x, nuevo_y
+                laberinto[jugador_y][jugador_x] = "P"
+            else:
+                print("¡Has llegado a la salida!")
+                break
         elif tecla == "enter":
             break
-        
-        mostrar_laberinto(laberinto)
 
-    print("¡Has salido del laberinto!")
-    
 if __name__ == "__main__":
     main()
-
